@@ -1,0 +1,94 @@
+<div class="container">
+<br/><br/><br/><br/>
+
+<div class="row">
+
+<div class="col-md-8">
+</div>
+<div class="col-md-4">
+	<div class="card card-signup card-plain bg-white">
+                <div class="modal-header">
+
+                  <div class="card-header card-header-warning text-center">
+                    
+                    <h4 class="card-title">Log into the strong game</h4>
+                    
+                  </div>
+                </div>
+                <div class="modal-body">
+                    <form class="form" method="post">
+                        <div class="card-body">
+                            <div class="form-group bmd-form-group">
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="material-icons">email</i></div>
+                                  </div>
+                                  <input type="text" id="email" class="form-control" placeholder="Email...">
+                                </div>
+                            </div>
+
+                            <div class="form-group bmd-form-group">
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="material-icons">lock_outline</i></div>
+                                  </div>
+                                  <input id="password" type="password" placeholder="Password..." class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <a href="javascript: registerUser();" data-dismiss="modal" class="btn btn-primary btn-link btn-wd btn-lg">Get Started</a>
+                </div>
+            </div>
+
+</div>
+</div>
+
+</div>
+
+<script type="text/javascript">
+
+
+  function registerUser()
+  {
+
+    var url = config.api_url + "/auth";  
+    var params = {email:$('#email').val(),password:$('#password').val()};
+ 
+
+    //perform the call
+    fetch(url,{  
+      method: 'POST',
+      body: JSON.stringify(params),
+
+    }).then(function (response) 
+    {  
+      return response.json();
+    })  
+    .then(function(data) 
+    {
+
+      if(data != false)
+      {
+          docCookies.setItem('strong_guid',data.guid);
+
+          $('header').load('/src/components/header/header-member.html');
+          window.location.hash = '#dashboard';
+      }
+      else
+      {
+        alert("invalid username or password");
+      }
+
+ 
+    });
+
+
+    
+
+  }
+
+
+</script>

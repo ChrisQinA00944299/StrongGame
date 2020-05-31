@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TV App</title>
+
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="./lib/socket.io.js"></script>
+<script src="./config.js"></script>
+<script src="./js/application.js"></script>
+<script src="./lib/qrcode.min.js"></script>
+<script src="./lib/js.cookie-2.2.0.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="./lib/v4/dist/toolkit.min.js"></script>
+
+
+<link rel="stylesheet" href="./lib/v4/dist/toolkit-inverse.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link id="lnkTheme" rel="stylesheet" type="text/css" href="./themes/default.css">
+<link id="lnkScroll" rel="stylesheet" type="text/css" href="./themes/scroll.css">
+<link rel="stylesheet" type="text/css" href="./css/application.css">
+
+
+</head>
+<body class="question-body">
+
+
+
+<center>
+
+<div class="">
+	
+	<div class="wizard-card">
+	<div id="errorMessage" class="alert alert-danger"></div>
+
+	<div id="pnlSelect">
+
+		<div class="container">
+
+			<form class="form" id="frmGetInfo">
+					<div class="form-group">
+					    <label for="txtGameID"><strong>Game ID</strong></label>
+					    <input type="text" class="form-control" id="txtGameID" aria-describedby="gameID" placeholder="Enter Game ID">
+					    <small id="gameID" class="form-text text-muted">Please enter your game ID</small>
+					 </div>
+					
+					<a href="javascript: player.loadGame();" class="btn btn-primary" style="float:right;">Load Game <i class="fas fa-arrow-right"></i></a>
+			</form>
+
+			<br/>
+			<br/>
+			<br/>
+		</div>
+
+	</div>
+
+	<div id="pnlStart">
+		<div class="row">
+
+			<div class="col-md-4" id="instructions">
+				<div id="orPlay">
+				<ol ID="lstInstructions">
+						<li><p>Use the QR Code to the left</p></li>
+						<li><p>Or go to <strong>sg1.tech</strong> </p></li>
+						<li><p>Enter <strong>GAME ID:</strong> <span id="lblGameID"></span></p></li>
+						<li><p>Select your team and fill in profile</p></li>
+						<li><p>You're ready to start!</p></li>
+				</ol>
+				</div>
+
+				<h3>Teams:</h3>
+				<div id="lstPlayers"></div>
+			</div>
+			<div class="col-md-8">
+
+				
+				<div id="qrcode"></div>
+				<div class="clear"></div>
+
+				<br/>
+				<br/>
+				<br/>
+				<!--
+				<div class="announce-entries">
+				  <div class="announce-entry"><span class="announce-player">Craig McNinch</span> has joined team <span class="announce-team">ALPHA</span></div>
+				</div>
+				-->
+
+				
+	
+
+			</div>
+
+			
+		</div>
+	</div>
+
+
+	<div id="pnlGame">
+
+		<div class="row">
+			<div class="col-sm-12">
+				<br/>
+				<center>
+				<h4 id="lblTitle" style="font-size: 30px;">Please wait until game starts</h4>
+				<h5 id="lblTimer" style="font-size: 24px;"></h5>
+				</center>
+			</div>
+
+			<div class="col-sm-10 offset-sm-1">
+
+				<div id="pnlChoices">
+
+
+					<div class="progress" id="progress1">
+					  <div id="choice1" class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span class="choice-label justify-content-left d-flex position-absolute w-100" id="choice1-label">Choice goes here...</span></div>
+					</div>
+				
+			
+
+						<div class="progress" id="progress2">
+					  <div id="choice2" class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span class="choice-label justify-content-left d-flex position-absolute w-100" id="choice2-label">Choice goes here...</span></div>
+					</div>
+	
+
+					  <div class="progress" id="progress3">
+					  <div id="choice3" class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span class="choice-label justify-content-left d-flex position-absolute w-100" id="choice3-label">Choice goes here...</span></div>
+					</div>
+
+
+					  <div class="progress" id="progress4">
+					  <div id="choice4" class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span class="choice-label justify-content-left d-flex position-absolute w-100" id="choice4-label">Choice goes here...</span></div>
+					</div>
+					
+					
+					<div style="clear: both;">&nbsp;</div>
+					<span id="lblAnswer"></span>
+				</div>
+
+				<div id="pnlScores">
+
+
+				<table id="tblTeamScores" class="table-score" cellspacing="5" cellpadding="5">
+					<thead>
+						<tr>
+							<th>Rank</th>
+							<th></th>
+							<th align="left" style="text-align:left;">Team</th>
+							<th>Points</th>
+						</tr>
+					</thead>
+					<tbody>
+						
+					</tbody>
+				</table>
+				<table id="tblPlayerScore" class="table-score">
+					<thead>
+						<tr>
+							<th>Rank</th>
+							<th></th>
+							<th align="left" style="text-align: left;">Player</th>
+							<th>Points</th>
+						</tr>
+					</thead>
+					<tbody>
+							
+					</tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div id="pnlControls" >
+		<div id="pnlStatus">
+		<h6 id="bdgeConnect" style="text-align: right;"><span class="badge badge-success" style="height: 15px; width: 15px; border-radius: 15px;">&nbsp;</span></h6>
+		<h6 id="bdgeDisconnect" style="text-align: right;"><span class="badge badge-danger" style="height: 15px; width: 15px; border-radius: 15px;">&nbsp;</span></h6>
+		</div>
+
+		<div id="pnlGameID"></div>
+
+		<div id="pnlControlButtons">
+			<a class="btn btn-control" title="Start Game" id="btnStart" href="javascript: startGame();"> <i class="fas fa-play-circle"></i></a>
+			<a class="btn btn-control" title="Stop game" id="btnStop" href="javascript: stopGame();"> <i class="fas fa-stop"></i></a>
+			<a class="btn btn-control" title="Skip Countdown" id="btnSkip" href="javascript: skipItem();"> <i class="fas fa-step-forward"></i></a>
+			<a class="btn btn-control" title="Pause" id="btnPause" href="javascript: togglePause();"> <i class="fas fa-pause"></i></a>
+			<a class="btn btn-control" title="Resume" id="btnResume" href="javascript: togglePause();"> <i class="fas fa-play"></i></a>
+		</div>
+	</div>
+
+
+</div><!-- end card -->
+
+
+
+
+</div>
+</center>
+
+
+</body>
+</html>

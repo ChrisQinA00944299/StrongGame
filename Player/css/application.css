@@ -1,0 +1,137 @@
+body
+	{
+		color: #222222;
+		background: url("../images/repeat1.jpg");
+	}
+
+	.game-container
+	{
+		text-align: left;
+		margin-top: 4%;
+		max-width: 1024px;
+	}
+
+	.wizard-card
+	{
+		padding: 10px;
+		font-weight: lighter;
+		box-shadow: 0 20px 16px -15px rgba(0, 0, 0, 0.57);
+		min-height: 500px;
+		background-color: #000000;
+		opacity: .8;
+	}
+
+	#pnlContinue p
+	{
+		color: #FFFFFF;
+	}
+
+
+	#pnlContinue .btn
+	{
+		width: 90%;
+	}
+	
+	label, .choice-label
+	{
+		font-size: 1.1em;
+		font-weight: bold;
+	}
+	.form, .pnlScores, .white
+	{
+		color:#FFFFFF !important;
+	}
+
+	.question-link
+	{
+		text-decoration: none;
+	}
+
+	.question-link:hover
+	{
+		text-decoration: none;
+	}
+
+	.progress
+	{
+		height: 40px;
+		font-size: 1.2em;
+		margin-bottom: 10px;
+		font-weight: normal;
+	}
+
+	.progress:active
+	{
+		border: 3px solid #3498db;
+	}
+
+	.progress-review
+	{
+		border: none !important;
+	}
+
+	.progress-review:hover
+	{
+		border: none !important;
+	}
+
+
+
+	.choice-label
+	{
+		padding-left: 5px;
+		text-align: left !important;
+	}
+
+	.choice-selected
+	{
+		border: 3px solid #3498db;
+	}
+
+	.player-answer-correct
+	{
+		color: #27ae60; 
+		font-size: 20px; 
+		float:left; 
+		width: 5%; 
+		margin-left: 2px;
+		margin-top: 10px;
+	}
+
+	.player-answer-wrong
+	{
+		color: #e74c3c; 
+		font-size: 20px; 
+		float:left; 
+		width: 5%; 
+		margin-left: 2px;
+		margin-top: 10px;
+	}
+	
+	.error
+	{
+		color: #FF0000 !important;
+	}
+
+	#lstPlayers
+	{
+		color: #FFFFFF !important;
+		text-align: left !important;
+	}
+
+	#lstPlayers li
+	{
+		width: 100%;
+		font-size: 1.2em;
+		padding: 5px;
+	}
+
+	#pnlTerms
+	{
+		font-weight: bold;
+	}
+
+	#pnlWait
+	{
+		color: #FFFFFF;
+	}

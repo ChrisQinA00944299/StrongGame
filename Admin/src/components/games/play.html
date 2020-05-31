@@ -1,0 +1,946 @@
+<script src="./lib/socket.io.js"></script>
+<div class="container">
+	<h2>Host a game</h2>
+
+	
+
+	<div class="row">
+
+		<div class="col-md-8">
+
+			<center>
+			<h2>Game Play in Session</h2>
+			<h4><a href="javascript: history.back(1);" class="btn btn-primary"><i class="material-icons">keyboard_backspace</i> Go Back</a></h4>
+			</center>
+
+
+<!--
+			<div class="card">
+				<div class="card-header card-header-text ">
+					<div class="card-text">
+						<h4 class="card-title" id="lblGameFrm">Game Options</h4>
+					</div>
+				</div>
+
+				<div class="card-body">
+
+
+					<h4>Game Status - <strong><span id="lblStatus">Standing By</span></strong></h4>
+
+
+
+					<button class="btn btn-success" onclick="startGame();" id="btnStart"><i class="material-icons">play_arrow</i> Start Game</button> 
+					<button class="btn btn-info" onclick="togglePause();" id="btnPause"><i class="material-icons">pause</i>Pause Game</button> 
+					<button class="btn btn-info" onclick="togglePause();" id="btnResume"><i class="material-icons">play_arrow</i>Resume Game</button> 
+
+					<button class="btn btn-success" onclick="togglePlayMedia();" id="btnPlayMedia"><i class="material-icons">play_arrow</i>Play Media</button> 
+					<button class="btn btn-danger" onclick="togglePlayMedia();" id="btnStopMedia"><i class="material-icons">pause</i>Stop Media</button> 
+
+					
+					<button class="btn btn-danger" onclick="stopGame();" id="btnStop"><i class="material-icons">stop</i>Stop Game</button> 
+					<button class="btn btn-warning" onclick="skipItem();" id="btnSkip"><i class="material-icons">skip_next</i>Skip Item</button> 
+					<button class="btn btn-primary" onclick="loadStats();" id="btnStats"><i class="material-icons">insert_chart_outlined</i>View Stats</button> 
+					<button class="btn btn-warning float-right" onclick="reloadGame();" id="btnLoad"><i class="material-icons">refresh</i> Reload Game</button>
+
+
+
+				</div>
+			</div>
+
+			<div id="pnlScores">
+
+
+				<div class="card">
+					<div class="card-header card-header-text ">
+						<div class="card-text">
+							<h4 class="card-title" id="lblGameFrm">Player Scores</h4>
+						</div>
+					</div>
+
+					<div class="card-body">
+						<h3>Top Teams</h3>
+						<table id="tblTeamScores" class="table white">
+							<thead>
+								<tr>
+									<th></th> 
+									<th>Team</th>
+									<th>Score</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+
+						<h3>Top Players</h3>
+						<table id="tblPlayerScore" class="table white">
+							<thead>
+								<tr>
+									<th></th>
+									<th>Player</th>
+									<th>Score</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div>
+
+
+
+			</div>
+
+
+		</div>
+		<div class="col-md-4">
+
+
+			
+
+
+			<div id="pnlPlayers">
+
+
+				<div class="card">
+					<div class="card-header card-header-text ">
+						<div class="card-text">
+							<h4 class="card-title" id="lblGameFrm">Registered Players</h4>
+						</div>
+						<br/><br/><br/>
+					</div>
+
+					<div class="card-body">
+
+
+						<h4 id="lblTotal">No registered players</h4>
+						<ul id="lstPlayers"></ul>
+
+
+					</div>
+				</div>
+
+
+
+
+			</div>
+-->
+		</div>
+
+	</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+
+		var socketServer = config.messaging_server;    
+		var gameInfo = {};
+		var pause = false;
+		var playMedia = false;
+		var gameID = "";
+		var skipQuestion = false;
+		var handlers = {};
+
+		handlers.nextQuestionTimed = nextQuestionTimed;
+		handlers.showAnswersTimed = showAnswersTimed;
+		handlers.showScores = showScores;
+		handlers.handlerTest = handlerTest;
+  
+		//our teams for the game...
+		var teams = [];
+		var questions = [];
+		var formItems = [];
+
+		var gameInfo = {
+			"id":0,
+			"status":"stopped",	
+			"sessionID":generateID("session"),
+			"countdownBeforeStart":5,
+			"countdownPerQuestion":30,
+			"countdownPerReview":30,
+			"teams":teams,
+			"questions":questions,
+			"formItems":formItems,
+			"currentQuestion":"",
+
+		};
+
+
+		
+		var playerRoom = "";
+		var gameRoom = "";
+		var questionCounter = 0;
+		var gameTimer = null;
+
+
+	$( document ).ready(function() {
+		//getGameInfo();
+		window.open(config.tv_url + "/?id=" + getUrlParam('id',0));
+		
+		$('#pnlScores').hide();
+		$('#btnPause').hide();
+		$('#btnResume').hide();
+		$('#btnSkip').hide();
+		$('#btnStop').hide();
+		$('#btnStats').hide();
+		$('#btnPlayMedia').hide();
+		$('#btnStopMedia').hide();
+
+		console.log("Play code - " + generatePlayCode());
+
+		
+
+	}); 
+
+
+	function skipItem()
+	{
+		skipQuestion = true;
+		gameMessaging.emit('skipItem', gameInfo.id, gameInfo.sessionID);
+		console.log("skipping question");
+	}
+
+
+	function getGameInfo() 
+	{
+	    
+
+
+
+		//perform AJAX call to the API to get our data...
+		var url = config.api_url + "/games/" + getUrlParam('id',0);  
+		var params = {};
+
+		//perform the call
+		fetch(url,{  
+		method: 'GET',
+		}).then(function (response) 
+		{  
+		return response.json();
+		})  
+		.then(function(data) 
+		{
+			//console.log("game data");
+			//console.log(data);
+
+		var timings = JSON.parse(data.timings);
+		var guid = docCookies.getItem('strong_guid');
+	
+
+		teams = JSON.parse(data.teams);
+		questions = JSON.parse(data.questions);
+		formItems = JSON.parse(data.form_items);
+		gameInfo.teams = JSON.parse(data.teams);
+		gameInfo.questions = JSON.parse(data.questions);
+		gameInfo.formItems = JSON.parse(data.form_items);
+		gameInfo.id = generatePlayCode();
+		gameInfo.gameID = data.ID;
+		gameInfo.hostID = guid;
+		gameInfo.themeID = data.themeID;
+		gameInfo.countdownBeforeStart = timings.timing_start;
+		gameInfo.countdownPerQuestion = timings.timing_trivia;
+		gameInfo.countdownPerReview = timings.timing_review;
+
+		gameID = data.id;
+		console.log("getting data...");
+		console.log(gameInfo);
+
+
+		loadGame();
+
+		});
+
+
+
+
+
+
+	}
+
+
+	function getUrlParam(parameter, defaultvalue)
+	{
+	    var urlparameter = defaultvalue;
+	    if(window.location.href.indexOf(parameter) > -1){
+	        urlparameter = getUrlVars()[parameter];
+	        }
+	    return urlparameter;
+	}
+
+	function getUrlVars() 
+	{
+	    var vars = {};
+	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+	        vars[key] = value;
+	    });
+	    return vars;
+	}
+
+
+
+	//##############################################################################################################
+	//---------------------------------------------------------------------------------------
+	//Name:        GAMEMESSAGING NAMESPACE
+	//Description: Namespace for the game management actions...
+	//---------------------------------------------------------------------------------------
+    var gameMessaging = io(socketServer +  'game');
+
+    //---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.connect()
+	//Description: handler for the connect event
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('connect', function () {
+		console.log("gameMessaging Connected!");
+
+		if(gameRoom != "")
+		{
+			gameMessaging.emit('joinRoom', gameRoom);
+			console.log("Rejoining room - " + gameRoom);
+		}
+	});
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.loaded()
+	//Description: confirms loading of game info to server and joins admin to game management room
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('loaded', function () {
+
+		gameRoom = gameInfo.id + "_" + gameInfo.sessionID;
+		gameMessaging.emit('joinRoom', gameRoom);
+		console.log("Game Info Loaded!");
+		//window.location = config.tv_url + "/?session=" + gameInfo.id;
+	});
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.joinedRoom()
+	//Description: confirms loading of game info to server and joins admin to game management room
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('joinedRoom', function (room) {
+		console.log("Joined room " + room );
+	});
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.skipped()
+	//Description: confirms loading of game info to server and joins admin to game management room
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('skipped', function (room) {
+		console.log("skipping item");
+		skipQuestion = true;
+
+	});
+
+
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.skipped()
+	//Description: confirms loading of game info to server and joins admin to game management room
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('executeHandler', function(handler) {
+		console.log(handler);
+		handlers[handler]();
+
+	});
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.tick()
+	//Description: handles the game tick event
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('tick', function (seconds) {
+		
+		globalCounter = seconds;
+
+		if(seconds < 10)
+        {
+             $('#lblStatus').html("Time Left: <span style='color: #FF0000;'> <strong>" + seconds + "</strong></span> seconds");
+        }
+        else
+        {
+             $('#lblStatus').html("Time Left: <strong>" + seconds + "</strong> seconds");
+        }
+	});
+
+
+
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.togglePause()
+	//Description: confirms loading of game info to server and joins admin to game management room
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('togglePause', function (room) {
+		
+		if(pause == true)
+		{
+			pause = false;
+			$('#btnPause').show();
+			$('#btnResume').hide();
+			
+
+		}
+		else
+		{
+			pause = true;
+			$('#btnResume').show();
+			$('#btnPause').hide();
+			
+		}
+
+	});
+
+
+
+
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.gameInfo()
+	//Description: Notify the player that they had been disconnected
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('gameInfo', function (msg) {
+		console.log("Game Info Retrieved!");
+		console.log(msg);
+
+	});
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.flush()
+	//Description: flushes EVERYTHING from the server...
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('flushed', function () {
+		console.log("Game Info Flushed!");
+		$('#lstPlayers').html("");
+		$('#tblTeamScores > tbody').html('');
+		$('#tblPlayerScore > tbody').html('');
+	});
+
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.start()
+	//Description: handles the game start event
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('start', function (room) {
+		console.log("Game Started For " + room);
+		$('#lblStatus').html("Game Started");
+		$('#btnPause').show();
+		//$('#btnStart').hide();
+		$('#btnStop').show();
+		$('#btnStats').hide();
+		$('#btnPause').show();
+		$('#btnResume').hide();
+		$('#btnPlayMedia').hide();
+		$('#btnStopMedia').hide();
+		//performCountdown(gameInfo.countdownBeforeStart,"nextQuestion");
+	});
+
+	
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.stop()
+	//Description: handles the game stop event
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('stop', function (room) {
+		console.log("Game Stopped For " + room );
+		clearTimeout(gameTimer);
+		$('#btnSkip').hide();
+		$('#lstPlayers').html("");
+		questionCounter = 0;
+		gameTimer = null;
+		$('#tblTeamScores > tbody').html('');
+		$('#tblPlayerScore > tbody').html('');
+		$('#lblStatus').html("Game Stopped");
+		$('#btnPause').hide();
+		$('#btnStop').hide();
+		$('#btnStart').show();
+		$('#btnStats').show();
+		$('#btnPlayMedia').hide();
+		$('#btnStopMedia').hide();
+		$('#btnPause').hide();
+		$('#btnResume').hide();
+
+	});
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.questionLoaded()
+	//Description: confirms loading of game info to server and joins admin to game management room
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('questionLoaded', function (question) {
+
+		console.log("Question Loaded!");
+
+		$('#btnPlayMedia').hide();
+		$('#btnStopMedia').hide();
+		$('#btnSkip').show();
+
+		if(question.type == "media")
+		{
+			$('#btnPlayMedia').show();
+			$('#btnStopMedia').hide();
+
+			togglePause();
+			autoPlayMedia();
+			
+		}
+
+		console.log(question);
+	});
+
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.players()
+	//Description: handles the game start event
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('players', function (teams) {
+		console.log("Players changed....");
+		console.log(teams);
+		//console.log(players);
+		var html = "";
+		var counter = 0;
+		for(var i = 0; i < teams.length; i++)
+		{
+			for(var j = 0; j < teams[i].players.length; j++)
+			{
+
+				counter++;
+				//get the player team name...
+				for (var k = 0; k < teams.length; k++)
+				{
+					if(teams[k].id == teams[i].players[j].team)
+					{
+						teamName = teams[k].name;
+						break;
+					}
+				}
+				
+				html += '<li><a href="javascript: removePlayer(\'' + teams[i].players[j].id + '\');">remove</a> :: ' + teams[i].players[j].name + ' - ' + teamName + '</li>';
+			}
+			
+		}
+		$('#lblTotal').html(counter + " Players");
+		$('#lstPlayers').html(html)
+	});
+
+
+
+	//---------------------------------------------------------------------------------------
+	//Name:        gameMessaging.scoresUpdatedAdmin()
+	//Description: handles the game stop event
+	//---------------------------------------------------------------------------------------
+	gameMessaging.on('scoresUpdatedAdmin', function (scores) {
+
+		$('#pnlPlayers').show();
+		$('#pnlScores').show();
+
+		console.log("showing scores admin");
+		var html = "";
+		var rank = 1;
+		var prevScore = 0;
+		for(var i = 0; i < 3; i++)
+		{
+
+			try
+			{
+				if(scores.teams[i].score < prevScore)
+				{
+					rank++;
+				}
+
+				prevScore = scores.teams[i].score;
+
+
+				html += '<tr>';
+				html += '<td>' + rank + '</td><td>' + scores.teams[i].name + '</td><td>' + scores.teams[i].score + '</td>';
+				html += '</tr>';
+
+					
+			}
+			catch(err){}
+		}
+		$('#tblTeamScores > tbody').html(html);
+
+		var html = "";
+		var rank = 1;
+		var prevScore = 0;
+
+		console.log(scores.players);
+		for(var i = 0; i < 5; i++)
+		{
+
+			try
+			{
+
+				if(scores.players[i].score < prevScore)
+				{
+					rank++;
+				}
+
+				prevScore = scores.players[i].score;
+
+				html += '<tr>';
+				html += '<td>' + rank + '</td><td>' + scores.players[i].name + '</td><td>' + scores.players[i].score + '</td>';
+				html += '</tr>';
+
+					
+			}
+			catch(err){}
+		}
+		$('#tblPlayerScore > tbody').html(html);
+	    
+	});
+
+
+
+
+
+
+	//##############################################################################################################
+	//---------------------------------------------------------------------------------------
+	//Name:        PLAYMESSAGING NAMESPACE
+	//Description: Namespace for the game play actions...
+	//---------------------------------------------------------------------------------------
+    var playMessaging = io(socketServer + 'play');
+
+
+    //---------------------------------------------------------------------------------------
+	//Name:        playMessaging.connect()
+	//Description: handler for the connect event
+	//---------------------------------------------------------------------------------------
+	playMessaging.on('connect', function () {
+		console.log("playMessaging Connected!");
+
+		if(playerRoom != "")
+		{
+			playMessaging.emit('joinRoom', playerRoom);
+			console.log("Rejoining room - " + playerRoom);
+		}
+	});
+
+	
+
+	function loadGame()
+	{
+
+		//gameInfo.countdownBeforeStart = $('#txtBefore').val();
+		//gameInfo.countdownPerQuestion = $('#txtQuestion').val();
+		//gameInfo.countdownPerReview = $('#txtReview').val();
+
+
+		$('#lblStatus').html("Game " + gameInfo.id + " loaded.   <a style=\"float:right;\" href=\"" + config.tv_url + "/?session=" + gameInfo.id + "\" target=\"_blank\"><i class=\"material-icons\">airplay</i> Click here to load TV Display </a>");
+		gameMessaging.emit('loadGame', gameInfo);
+		gameMessaging.emit('getGameInfo', gameInfo.id);
+	}
+
+
+	function loadStats()
+	{
+		window.location.hash = 'stats?sessionID=' + gameInfo.sessionID;
+	}
+
+	function removePlayer(playerID)
+	{
+		var result = confirm("Do you want to remove this player?")
+		if(result)
+		{
+			console.log("removing player");
+			gameMessaging.emit('removePlayer', gameInfo.id, gameInfo.sessionID, playerID);
+		}
+		
+	}
+
+
+	function startGame()
+	{
+		gameMessaging.emit('startGame', gameInfo.id, gameInfo.sessionID);
+		
+	}
+
+	function stopGame()
+	{
+
+		console.log(gameID);
+		console.log(gameInfo);
+		console.log(gameInfo.gameID);
+
+
+		gameMessaging.emit('stopGame', gameInfo.id, gameInfo.gameID, gameInfo.sessionID);
+		
+	}
+
+	function flushGames()
+	{
+		gameMessaging.emit('flushGame', gameInfo.id);
+		$('#lblStatus').html("Games flushed");
+		questionCounter = 0;
+	}
+
+	function nextQuestion()
+	{
+		playMessaging.emit('nextQuestion', gameInfo.id, questionCounter);
+		$('#lblStatus').html("Sent Next Question - " + questionCounter);
+		questionCounter++;
+	}
+
+
+
+	function nextQuestionTimed()
+	{
+		playMessaging.emit('nextQuestion', gameInfo.id, questionCounter);
+		$('#lblStatus').html("Sent Next Question - " + questionCounter);
+		questionCounter++;
+		performCountdown(gameInfo.countdownPerQuestion,"showAnswersTimed");
+		
+	}
+
+
+
+	function prevQuestion()
+	{
+		playMessaging.emit('nextQuestion', gameInfo.id, questionCounter - 1);
+		$('#lblStatus').html("Sent Previous Question - " + questionCounter);
+		questionCounter--;
+	}
+
+	function startTick()
+	{
+		counter = 9999;
+		performCountdown(counter,null);
+	}
+
+	function stopTick()
+	{
+		clearTimeout(gameTimer);
+		$('#lblStatus').html("Timer Stopped");
+	}
+
+	function showScores()
+	{
+		playMessaging.emit('getScores', gameInfo.id, questionCounter - 1, true);
+		$('#lblStatus').html("Show ScoreBoard");
+	}
+
+	function showScoresTimed()
+	{
+		playMessaging.emit('getScores', gameInfo.id, questionCounter - 1, true);
+		$('#lblStatus').html("Show ScoreBoard");
+		performCountdown(gameInfo.countdownPerReview,"nextQuestionTimed");
+	}
+
+	function showAnswersTimed()
+	{
+
+		setTimeout(function(){
+
+		playMessaging.emit('getAnswers', gameInfo.id, questionCounter - 1);
+
+		console.log("showing answers delayed...");
+			
+
+			$('#lblStatus').html("Show Answers delayed");  
+
+			//are we on the last question?
+
+			console.log("counter ------- " + questionCounter);
+			console.log("counter ------- " + gameInfo.questions.length);
+			if(questionCounter == gameInfo.questions.length)
+			{
+				playMessaging.emit('getScores', gameInfo.id, questionCounter - 1, false);
+				performCountdown(gameInfo.countdownPerQuestion,"showScores");
+			}
+			else
+			{
+				playMessaging.emit('getScores', gameInfo.id, questionCounter - 1, false);
+				performCountdown(gameInfo.countdownPerReview,"nextQuestionTimed");
+			}
+
+		}, 2000);
+		
+
+
+		
+	}
+
+	function nextReview()
+	{
+		playMessaging.emit('nextReview', gameInfo.id, questionCounter);
+		$('#lblStatus').html("Sent Next Review");
+	}
+
+	function handlerTest()
+	{
+		console.log("handler success!!!!");
+	}
+
+	function updateSelections()
+	{
+		playMessaging.emit('updateSelections', gameInfo.id);
+		$('#lblStatus').html("Updating selections...");
+	}
+
+
+    function performCountdown(seconds, handler)
+    {
+
+    	/*
+    	gameMessaging.emit('tick', seconds, gameInfo.id, gameInfo.sessionID);
+
+    	if(skipQuestion)
+    	{
+    		skipQuestion = false;
+    		seconds = 0;
+    	}
+        
+        if(seconds < 10)
+        {
+             $('#lblStatus').html("Time Left: <span style='color: #FF0000;'> <strong>" + seconds + "</strong></span> seconds");
+        }
+        else
+        {
+             $('#lblStatus').html("Time Left: <strong>" + seconds + "</strong> seconds");
+        }
+       
+        if(pause == false)
+        {
+        	seconds = seconds - 1
+        }
+        
+
+        if(seconds < 0)
+        {
+            handler();
+        }
+        else
+        {
+            gameTimer = setTimeout(function(){performCountdown(seconds, handler)}, 1000);
+        }
+        */
+
+        gameMessaging.emit('performCountdown', seconds, gameInfo.id, gameInfo.sessionID, handler);
+    }
+
+
+
+    function performCountdown_new(seconds, handler)
+    {
+    	gameMessaging.emit('performCountdown', seconds, gameInfo.id, gameInfo.sessionID, handler);
+    }
+
+    function performCountdown_done(handler)
+    {
+    	handler();
+    }
+
+	function generateID(seed)
+	{
+			return seed + '_' + Math.random().toString(36).substr(2, 9);
+	}
+
+	function togglePause()
+	{
+
+		gameMessaging.emit('togglePause', gameInfo.id, gameInfo.sessionID);
+		
+	}
+
+
+	function autoPlayMedia()
+	{
+
+			$('#btnStopMedia').show();
+			$('#btnPlayMedia').hide();
+			gameMessaging.emit('playMedia', gameInfo.id);
+			playMedia = true;
+		
+	}
+
+	function togglePlayMedia()
+	{   
+		if(playMedia == true)
+		{
+			playMedia = false;
+			$('#btnPlayMedia').show();
+			$('#btnStopMedia').hide();
+			gameMessaging.emit('stopMedia', gameInfo.id);
+			
+
+		}
+		else
+		{
+			playMedia = true;
+			$('#btnStopMedia').show();
+			$('#btnPlayMedia').hide();
+			gameMessaging.emit('playMedia', gameInfo.id);
+		}
+		
+	}
+
+	function generatePlayCode()
+	{
+		   var result           = '';
+		   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		   var charactersLength = characters.length;
+		   for ( var i = 0; i < 2; i++ ) {
+		      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		   }
+
+		   result += Math.floor(Math.random() * 10);
+		   result += Math.floor(Math.random() * 10);
+
+		   return result;
+	}
+
+	function reloadGame()
+	{
+		console.log("reloading game");
+		location.reload();
+	}
+
+
+
+
+</script>
+
+<script src="./src/vendor/material-ui/js/material-dashboard.js?v=2.1.0" type="text/javascript"></script>
+
+
+<style type="text/css">
+	
+
+
+	table {  
+    color: #333;
+    font-family: Helvetica, Arial, sans-serif;
+    width: 640px; 
+    border-collapse: 
+    collapse; border-spacing: 0; 
+}
+
+td, th {  
+    border: 1px solid transparent; /* No more visible border */
+    height: 30px; 
+    transition: all 0.3s;  /* Simple transition for hover effect */
+}
+
+th {  
+    background: #DFDFDF;  /* Darken header a bit */
+    font-weight: bold;
+}
+
+td {  
+    background: #FAFAFA;
+    text-align: center;
+}
+
+/* Cells in even rows (2,4,6...) are one color */        
+tr:nth-child(even) td { background: #F1F1F1; }   
+
+/* Cells in odd rows (1,3,5...) are another (excludes header cells)  */        
+tr:nth-child(odd) td { background: #FEFEFE; }  
+
+tr td:hover { background: #666; color: #FFF; }  
+/* Hover cell effect! */
+
+
+</style>

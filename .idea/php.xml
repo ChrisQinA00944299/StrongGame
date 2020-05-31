@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/cache" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/broadcasting" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/view" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/translation" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/pipeline" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/encryption" />
+      <path value="$PROJECT_DIR$/API/vendor/grandt/relativepath" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/pagination" />
+      <path value="$PROJECT_DIR$/API/vendor/grandt/phpzipmerge" />
+      <path value="$PROJECT_DIR$/API/vendor/grandt/binstring" />
+      <path value="$PROJECT_DIR$/API/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/API/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/API/vendor/composer" />
+      <path value="$PROJECT_DIR$/API/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/API/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/API/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/API/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/API/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/API/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/API/vendor/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/API/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/API/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/API/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/API/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/API/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/API/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/API/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/API/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/API/vendor/opis/closure" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/API/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/API/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/API/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/API/vendor/fzaninotto/faker" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/debug" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/API/vendor/phpunit/php-token-stream" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/API/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/API/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/API/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/API/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/API/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/API/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/API/vendor/nikic/fast-route" />
+      <path value="$PROJECT_DIR$/API/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/API/vendor/laravel/lumen-framework" />
+      <path value="$PROJECT_DIR$/API/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/API/vendor/egulias/email-validator" />
+      <path value="$PROJECT_DIR$/API/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/database" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/validation" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/queue" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/config" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/filesystem" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/bus" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/container" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/events" />
+      <path value="$PROJECT_DIR$/API/vendor/phpzip/phpzip" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/http" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/support" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/console" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/hashing" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/session" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/auth" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/log" />
+      <path value="$PROJECT_DIR$/API/vendor/illuminate/contracts" />
+    </include_path>
+  </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/API/vendor/autoload.php" />
+    </phpunit_settings>
+  </component>
+</project>

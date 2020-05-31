@@ -1,0 +1,370 @@
+<div class="container">
+<h2>Teams</h2>
+<h4><a href="javascript: history.back(1);"><i class="material-icons">keyboard_backspace</i> Go Back</a></h4>
+<div class="row panel" id="pnlListTeams">
+
+		<div class="col-md-12">
+			<button class="btn btn-success btn-round float-right" onclick="teams.addTeam()">
+				<i class="material-icons">add</i> New team
+			</button>	
+
+			<div class="card">
+				<div class="card-header card-header-primary card-header-icon">
+					<div class="card-icon">
+						<i class="material-icons">group</i> 
+					</div>		
+
+
+
+				</div>
+
+				<div class="card-body">
+
+					<table class="table" id="tblTeams">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+								<th>Image</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							
+
+
+						</tbody>
+					</table>
+
+				</div>
+
+
+				<div class="card-footer">
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<!-- add team form -->
+<div id="pnlTeamForm" class="hide panel">
+	<div class="card">
+		<div class="card-header card-header-text ">
+			<div class="card-text">
+				<h4 class="card-title" id="lblTeamTitle">Add Team</h4>
+			</div>
+		</div>
+
+		<div class="card-body">
+
+		<form>
+			<br/>
+			<center>
+			<div class="fileinput fileinput-new text-center" data-provides="fileinput">
+				<div class="fileinput-new thumbnail img-raised">
+					<img src="https://epicattorneymarketing.com/wp-content/uploads/2016/07/Headshot-Placeholder-1.png" alt="...">
+				</div>
+				<div class="fileinput-preview fileinput-exists thumbnail img-raised"></div>
+				<div>
+					<span class="btn btn-raised btn-round btn-file">
+						<span class="fileinput-new">Select image</span>
+						<span class="fileinput-exists">Change</span>
+						<input type="file" id="flImage" name="..." />
+					</span>
+					<a href="#pablo" class="btn btn-danger btn-round fileinput-exists" data-dismiss="fileinput">
+						<i class="fa fa-times"></i> Remove</a>
+					</div>
+				</div>
+			</center>
+			<br/>
+			
+			<div class="form-group">
+				<label for="txtName">Team Name</label>
+				<input type="text" class="form-control question-input" id="txtName" placeholder=""> 
+			</div>
+			<div class="form-group">
+				<label for="txtDescription">Team Description</label>
+				<input type="text" class="form-control question-input" id="txtDescription" placeholder=""> 
+			</div>
+			<br/>
+
+			
+
+
+
+		</form>
+
+
+			<center>
+				<button type="button" class="btn btn-success" onclick="teams.addTeam_submit()">Submit</button>
+				&nbsp;&nbsp;&nbsp;
+				<button type="button" class="btn btn-danger" onclick="games.addTeam_cancel()">Cancel</button>
+			</center>
+
+
+		</div>
+		<div class="card-footer">
+
+		</div>
+	</div>
+
+
+</div>
+
+
+
+
+<script type="text/javascript">
+	$( document ).ready(function() {
+	teams.loadTeams();
+
+	var param = getUrlParam('trigger','none');
+
+	if(param == "new")
+	{
+		teams.addTeam();
+	}
+
+
+	}); 
+
+$(function() 
+{
+	$("#flImage").change(function ()
+	{
+		var fileName = $(this).val();
+
+
+		console.log("file changed");
+		const input = document.getElementById('flImage');
+
+		const fileInput = document.querySelector('#flImage') ;
+		const formData = new FormData();
+		formData.append('flImage', fileInput.files[0]);
+
+		console.log(fileInput.files[0]);
+		var url = config.api_url + "/teams/image/upload";  
+		var params = {};
+
+		$.ajax({
+		type: "POST",
+		enctype: 'multipart/form-data',
+		url: url,
+		data: formData,
+		processData: false,
+		contentType: false,
+		cache: false,
+		timeout: 600000,
+		success: function (data) {
+		teams.teamImage = JSON.parse(data);
+		},
+		error: function (e) {
+		console.log("ERROR : ", e);
+	}
+	});
+	}); 
+	});
+
+
+	var teams = {
+
+		teamImage:"",
+
+
+		//-----------------------------------------------------------------------------
+		//       name: loadTeams()
+		//Description: Loads the teams from the database
+		//----------------------------------------------------------------------------- 
+		loadTeams:function()
+		{ 
+			$('.panel').hide();
+			$('#pnlListTeams').fadeIn();
+
+
+
+			  //perform AJAX call to the API to get our data...
+			  var guid = docCookies.getItem('strong_guid');
+			  var url = config.api_url + "/teams/user/" + guid;  
+			  var params = {};
+
+			  //perform the call
+			  fetch(url,{  
+			  	method: 'GET',
+			  }).then(function (response) 
+			  {  
+			  	return response.json();
+			  })  
+			  .then(function(data) 
+			  {
+
+			  	var html = "";
+
+			  	for(var i = 0; i < data.length; i++)
+			  	{
+
+			  		//console.log(data[i]);
+
+			  		html += '<tr>';
+			  		html += '<td>' + data[i].name + '</td>';
+			  		html += '<td>' + data[i].description + '</td>';
+			  		html += '<td><img src="' + config.api_url + '/teams/image/' + data[i].image.replace(/"/g, "") + '" style="width: 150px;"/></td>';
+			  		html += '<td class="td-actions text-right">';
+			  		html += '&nbsp;&nbsp;<button type="button" onclick="teams.deleteTeam(' + data[i].ID + ')" class="btn btn-danger" rel="tooltip" data-toggle="tooltip" data-placement="bottom" title="Delete team"> ';
+			  		html += '<i class="material-icons">delete</i>';
+			  		html += '</button>';
+			  		html += '</td>';
+			  	}
+
+			  	$('#tblTeams > tbody').html(html);
+			  	$('[rel="tooltip"]').tooltip('hide');
+			  	$('[rel="tooltip"]').tooltip();
+			  	
+
+			  });
+
+
+			},
+
+
+
+		//-----------------------------------------------------------------------------
+		//       name: addTeam()
+		//Description: opens the addteam form
+		//----------------------------------------------------------------------------- 
+		addTeam:function()
+		{
+
+			$('.panel').hide();
+			$('#pnlTeamForm').fadeIn();
+			//$('#lblGameFormTitle').html("Add a New Team");
+
+			//$('#btnAddGame').show();
+			//$('#btnUpdateGame').hide();  
+
+
+		},
+
+		//-----------------------------------------------------------------------------
+		//       name: addTeam_submit()
+		//Description: 
+		//----------------------------------------------------------------------------- 
+		addTeam_submit:function()
+		{
+
+
+			//perform AJAX call to the API to get our data...
+			var url = config.api_url + "/teams";  
+			var guid = docCookies.getItem('strong_guid');
+			var params = {
+				name:$('#txtName').val(),
+				description:$('#txtDescription').val(),
+				image:teams.teamImage,
+				hostID:guid,
+			};
+
+			console.log(params);
+
+			  //perform the call
+			  fetch(url,{  
+			  	method: 'POST',
+			  	body: JSON.stringify(params),
+
+			  }).then(function (response) 
+			  {  
+			  	return response.json();
+			  })  
+			  .then(function(data) 
+			  {
+
+			  	//teams.team.image = "";
+
+			  	$('#txtName').val('');
+			  	$('#txtDescription').val('');
+
+			  	teams.loadTeams();
+			  });
+
+
+
+		},
+
+		//-----------------------------------------------------------------------------
+		//       name: addTeam_cancel()
+		//Description: 
+		//----------------------------------------------------------------------------- 
+		addTeam_cancel:function()
+		{
+			$('#pnlTeamForm').hide();
+			$('#pnlListTeams').fadeIn();			
+		},
+
+
+
+
+		//-----------------------------------------------------------------------------
+		//       name: deleteTeam()
+		//Description: 
+		//----------------------------------------------------------------------------- 
+		deleteTeam:function(id)
+		{
+
+			//perform AJAX call to the API to get our data...
+			var url = config.api_url + "/teams/" + id;  
+			var guid = docCookies.getItem('strong_guid');
+			var params = {
+				id:id,
+				hostID:guid,
+			};
+
+			  //perform the call
+			  fetch(url,{  
+			  	method: 'DELETE',
+			  	headers: {'Content-Type': 'application/json'}		    
+			  }).then(function (response) 
+			  {   
+			  	return response.json();
+			  })  
+			  .then(function(data) 
+			  {
+			  	teams.loadTeams();
+			  });
+
+
+
+			},
+
+
+
+
+
+	};
+
+
+	function getUrlVars() 
+	{
+	    var vars = {};
+	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+	        vars[key] = value;
+	    });
+	    //console.log("vars");
+	    //console.log(vars);
+	    return vars;
+
+	}
+
+
+	function getUrlParam(parameter, defaultvalue){
+	    var urlparameter = defaultvalue;
+	    if(window.location.href.indexOf(parameter) > -1){
+	        urlparameter = getUrlVars()[parameter];
+	    }
+
+	    return urlparameter;
+	}
+
+
+</script>

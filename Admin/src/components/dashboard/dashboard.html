@@ -1,0 +1,449 @@
+<div id='slider'>
+<center><h3>We're Here to Help!</h3></center>	
+
+<h4>Contact Us</h4>
+<ul>
+	<li><i class="material-icons">phone</i>&nbsp;&nbsp;&nbsp; 604-733-1225 </li>
+	<li><i class="material-icons">email</i>&nbsp;&nbsp;&nbsp; <a href="mailto:support@strong-game.com">support@strong-game.com</a></li>
+</ul>
+<br/>
+<ul>
+	<li><a target="_blank" href="https://whitemountainsystems.freshdesk.com/support/solutions/articles/36000084312-creating-a-game">Creating a Game</a></li>
+	<li><a target="_blank" href="https://whitemountainsystems.freshdesk.com/support/solutions/articles/36000085835-launching-a-game">Launching a Game</a></li>
+	<li><a target="_blank" href="https://whitemountainsystems.freshdesk.com/support/home">Visit our knowledgebase</a></li>
+</ul>
+
+
+<center>
+<button class="btn btn-danger" id="btnClose">Close</button>
+</center>
+</div>
+
+
+<div class="container">
+	<center>
+		<h2>Dashboard</h2>
+
+		<a class="btn btn-success btn-dashboard" href="#games?trigger=new" id="btnNewGame"> New Game</a> &nbsp;&nbsp;&nbsp;
+		<a class="btn btn-success btn-dashboard" href="#teams?trigger=new" id="btnNewTeam"> New Team </a> 
+
+		<a class="btn-help" href="javascript: return false;" id="btnHelp">?</a> 
+
+
+	</center>
+	<div class="row">
+	<div class="col-md-6">
+		<h3>Your Recent Games</h3>
+
+			<div class="card" style="height: 800px;">
+				<div class="card-header card-header-info card-header-icon">
+					<div class="card-icon">
+						<i class="material-icons">dashboard</i> 
+					</div>		
+
+
+
+				</div>
+
+				<div class="card-body">
+
+					<table class="table" id="tblGames">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							
+
+
+						</tbody>
+					</table>
+
+				</div>
+
+
+				<div class="card-footer">
+
+				</div>
+			</div>
+
+			<!--
+			<div class="col-md-6">
+				<div class="card card-stats">
+					<div class="card-header card-header-primary card-header-icon">
+						<div class="card-icon">
+							<i class="material-icons">dashboard</i>
+						</div>
+						<p class="card-category">Games</p>
+						<h3 class="card-title"><span id="lblGameCount">0</span></h3>
+					</div>
+					<div class="card-footer">
+						<div class="stats">
+							<i class="material-icons text-primary">edit</i>
+							<a href="#games">Manage Games</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="col-md-6">
+				<div class="card card-stats">
+					<div class="card-header card-header-warning card-header-icon">
+						<div class="card-icon">
+							<i class="material-icons">group</i>
+						</div>
+						<p class="card-category">Teams</p>
+						<h3 class="card-title" id="lblTeamCount">0</h3>
+					</div>
+					<div class="card-footer">
+						<div class="stats">
+							<i class="material-icons text-primary">edit</i>
+							<a href="#teams">Manage Teams</a>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+			-->
+
+
+	</div>
+	<div class="col-md-6">
+		
+		<h3>Recently Played</h3>
+
+		<div class="card" style="height: 800px;">
+
+			<div class="card-header card-header-primary card-header-icon">
+					<div class="card-icon">
+						<i class="material-icons">insert_chart_outlined</i> 
+					</div>		
+
+
+
+				</div>
+
+      <div class="card-body">
+      	<h4>Latest 10 sessions</h4>
+		<table class="table" id="tblSessions">
+
+		    <tbody>
+		       
+
+	    </tbody>
+		</table>
+
+		</div>
+	</div>
+	</div>
+
+
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	
+	$( document ).ready(function() {
+		//countGames();
+		//countTeams();
+		getSessions();
+		loadGames();
+
+		
+
+	}); 
+
+	function countGames()
+	{
+
+		 //perform AJAX call to the API to get our data...
+		  var guid = docCookies.getItem('strong_guid');
+		  var url = config.api_url + "/games/user/" + guid + "/count";  
+		  var params = {};
+
+		  //perform the call
+		  fetch(url,{  
+		  	method: 'GET',
+		  }).then(function (response) 
+		  {  
+		  	return response.json();
+		  })  
+		  .then(function(data) 
+		  {
+
+		  	console.log(data);
+		  	$('#lblGameCount').html(data.total);
+
+
+		  });
+
+	}
+
+
+
+	function countTeams()
+	{
+		 //perform AJAX call to the API to get our data...
+		  var guid = docCookies.getItem('strong_guid');
+		  var url = config.api_url + "/teams/user/" + guid + "/count";  
+		  var params = {};
+
+		  //perform the call
+		  fetch(url,{  
+		  	method: 'GET',
+		  }).then(function (response) 
+		  {  
+		  	return response.json();
+		  })  
+		  .then(function(data) 
+		  {
+
+		  	console.log(data);
+		  	$('#lblTeamCount').html(data.total);
+
+
+		  });
+
+	}
+
+
+
+	function getSessions()
+	{
+		 //perform AJAX call to the API to get our data...
+		  var guid = docCookies.getItem('strong_guid');
+		  var url = config.api_url + "/sessions/user/" + guid + "";  
+		  var params = {};
+
+		  //perform the call
+		  fetch(url,{  
+		  	method: 'GET',
+		  }).then(function (response) 
+		  {  
+		  	return response.json();
+		  })  
+		  .then(function(data) 
+		  {
+
+		  	var html = "";
+		  	var max = 10;
+
+		  	if(data.length < max)
+		  		max = data.length;
+
+		  	for(var i = 0; i < max; i++)
+		  	{
+
+		  		var stillUtc = moment.utc(data[i].date).toDate();
+
+				html += '<tr>';
+				html += '<td>' +  moment(stillUtc).local().format('lll') + '</td>';
+				html += '<td>' + data[i].title + '</td>';
+				html += '<td class="td-actions text-right">';
+				html += '<button onclick="loadGameStatsSession(\'' + data[i].sessionID + '\')" type="button" class="btn btn-info" data-toggle="tooltip" data-placement="bottom" title="Game Statistics">';
+				html += '<i class="material-icons">equalizer</i>';
+				html += '</button>&nbsp;';
+				html += '</td>';
+				html += '</tr>';
+
+		  	}
+
+
+		  
+		  	$('#tblSessions').html(html);
+
+
+		  });
+
+	}
+
+
+	//-----------------------------------------------------------------------------
+	//       name: loadGameStats()
+	//Description: 
+	//----------------------------------------------------------------------------- 
+	function loadGameStats(id)
+	{
+		//console.log("stats");
+		window.location.hash = 'stats?id=' + id;
+	}
+
+
+	//-----------------------------------------------------------------------------
+	//       name: loadGameStats()
+	//Description: 
+	//----------------------------------------------------------------------------- 
+	function loadGameStatsSession(id)
+	{
+		//console.log("stats");
+		window.location.hash = 'stats?sessionID=' + id;
+	}
+
+
+
+
+	//-----------------------------------------------------------------------------
+	//       name: loadGames()
+	//Description: loads the games to the games management screen
+	//----------------------------------------------------------------------------- 
+	function loadGames()
+	{ 
+
+		  //perform AJAX call to the API to get our data...
+		  var guid = docCookies.getItem('strong_guid');
+		  var url = config.api_url + "/games/user/" + guid;  
+		  var params = {};
+
+		  //perform the call
+		  fetch(url,{  
+		  	method: 'GET',
+		  }).then(function (response) 
+		  {  
+		  	return response.json();
+		  })  
+		  .then(function(data) 
+		  {
+
+		  	var html = "";
+		  	var length = 0;
+
+		  	if(data.length > 10)
+		  	{
+		  		length = 10;
+		  	}
+		  	else
+		  	{
+		  		length = data.length;
+		  	}
+
+		  	for(var i = 0; i < length; i++)
+		  	{
+
+		  		var questions = JSON.parse(data[i].questions);
+		  		var teams = JSON.parse(data[i].teams);
+
+		  		html += '<tr>';
+		  		html += '<td>' + data[i].title + '</td>';
+		  		html += '<td class="td-actions text-right">';
+		  		html += '<button type="button" onclick="playGame(' + data[i].ID + ')" class="btn btn-success" data-toggle="tooltip" rel="tooltip" data-placement="bottom" title="Host Game">';
+		  		html += '<i class="material-icons">arrow_right</i>';
+		  		html += '</button>';
+		  		html += '&nbsp;&nbsp;<button type="button" onclick="loadGameStats(' + data[i].ID + ')" class="btn btn-primary" rel="tooltip" data-toggle="tooltip" data-placement="bottom" title="Stats & Feedback">';
+		  		html += '<i class="material-icons">insert_chart_outlined</i>';
+		  		html += '</button>'
+		  		html += '</td>';
+		  	}
+
+		  	$('#tblGames > tbody').html(html);
+		  	$('[rel="tooltip"]').tooltip('hide');
+		  	$('[rel="tooltip"]').tooltip();
+		  	
+
+		  });
+
+
+		}
+
+
+		//-----------------------------------------------------------------------------
+		//       name: play()
+		//Description: 
+		//----------------------------------------------------------------------------- 
+		function playGame(id)
+		{
+			$('[rel="tooltip"]').tooltip('hide');
+			//window.location.hash = 'play?id=' + id;
+			window.open(config.tv_url + '?id=' + id);
+		}
+
+
+
+
+$('#slider').slideReveal({
+  trigger: $("#btnHelp"),
+  position: "right",
+  push:false,
+  width: 500,
+  overlayColor: "rgba(0,0,0,0)",
+});
+
+$( "#btnClose" ).click(function() {
+  $('#slider').slideReveal("hide")
+});
+
+</script>
+
+<script src="./src/vendor/material-ui/js/material-dashboard.js?v=2.1.0" type="text/javascript"></script>
+
+<style type="text/css">
+
+	.btn-dashboard
+	{
+		width: 250px;
+	}
+
+	.btn-help
+	{
+		position: absolute;
+		background: linear-gradient(60deg, #ab47bc, #8e24aa);
+		color: #FFFFFF;;
+		border-radius: 50px;
+		right: 50px;
+		bottom: 50px;
+		height: 75px;
+		width: 75px;
+		font-size: 48px;
+		padding-top: 25px;
+		font-weight: bold;
+		float: right;
+		z-index: 100;
+		box-shadow: 2px 2px 5px #888888;
+		
+	}
+
+	.btn-help:hover, .btn-help:active
+	{
+	
+		color: #FFFFFF;
+		box-shadow: 5px 5px 10px #888888;
+	}
+
+	#slider
+	{
+		background-color: #000;
+		color: #FFF;
+		z-index: 200;
+		padding: 5px;
+	}
+
+	#slider a 
+	{
+		color: #FFF;
+		text-decoration: underline;
+	}
+
+	#slider ul
+	{
+		list-style: none;
+		font-size: 1.2em;
+	}
+
+	#slider ul li 
+	{
+		margin-bottom: 10px;
+	}
+
+	#slider #btnClose
+	{
+		position: absolute;
+		bottom: 20px;
+		right: 20px;
+	}
+
+
+</style>

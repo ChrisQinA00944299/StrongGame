@@ -1,0 +1,26 @@
+{
+  "name": "strong_manager",
+  "version": "1.0.0",
+  "description": "Game Manager and Dashboard application for the Strong Game",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "webpack-dev-server",
+    "build": "webpack"
+  },
+  "author": "Craig McNinch",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^2.1.1",
+    "jquery": "^3.4.1",
+    "node-sass": "^4.12.0",
+    "popper.js": "^1.15.0",
+    "raw-loader": "^2.0.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.31.0",
+    "webpack-cli": "^3.3.2",
+    "webpack-dev-server": "^3.4.1"
+  },
+  "dependencies": {}
+}

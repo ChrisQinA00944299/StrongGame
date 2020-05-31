@@ -1,0 +1,280 @@
+<!DOCTYPE html>  
+<html>
+<head>
+	<title>Player App</title>
+ 
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+<script src="./config.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="./lib/v4/dist/toolkit.min.js"></script>
+<script src="./lib/js.cookie-2.2.0.min.js"></script>
+<script src="./lib/socket.io.js"></script>
+<script src="./lib/jquery.validate/jquery.validate.min.js"></script>
+<script src="./js/application.js"></script>
+
+
+
+<link rel="stylesheet" href="./lib/v4/dist/toolkit-inverse.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="./css/application.css">
+
+</head>
+<body>
+
+
+<div class="container-fluid"> 
+<center>
+
+<div class="game-container">
+	
+	<div class="card wizard-card">
+
+	
+
+	<div id="errorMessage" class="alert alert-danger"></div>
+
+	<div id="pnlContinue">
+		<center>
+			<p>It seems that you already have a game in session</p>
+			<a  class="btn btn-success" href="javascript: player.continueGame();">Continue Current Game</a><br/><br/>
+			<a class="btn btn-danger" href="javascript: player.reloadGame();">Leave Current Game</a>
+		</center>
+	</div>
+
+
+	<div id="pnlTerms">
+		<div class="row">
+			<div class="col-sm-12" style="color:#FFFFFF;">
+			<div id="lblTerms"></div>
+			<center>
+			<a href="javascript:toggleTerms();" class="btn btn-success">Go Back</a>
+			</center>
+
+		</div>
+		</div>
+	</div>
+
+	<div id="pnlRegister">
+		<div class="row">
+			<div class="col-sm-12">
+				<br/>
+				<center>
+				<h4>Choose Game and Play</h4>
+				</center>
+			</div>
+
+			<div class="col-sm-10 offset-sm-1">
+			<form class="form" id="frmGameStart">
+				<div class="form-group">
+				    <label for="txtGameID"><strong>Game ID</strong></label>
+				    <input type="text" class="form-control" id="txtGameID" aria-describedby="gameID" placeholder="Enter Game ID" required>
+				    <small id="gameID" class="form-text text-muted">Please enter your game ID</small>
+				 </div>
+				
+				<a href="javascript: player.loadGame();" class="btn btn-primary" style="float:right;">Next <i class="fas fa-arrow-right"></i></a>
+			</form>
+			</div>
+		</div>
+
+		<br>
+		<center>
+			<span style="color: #FFFFFF;">By Registering you agree to our </span><a href="javascript:toggleTerms();">Terms of Use</a>
+		 
+		</center>
+	</div>
+
+
+	<div id="pnlWait">
+		<center>
+			<h3>Game not started</h3>
+			<p>The game has not started yet. please wait for the host to start the game</p>
+		</center>
+	</div>
+
+	<div id="pnlPlayer">
+
+		<div class="row">
+			<div class="col-sm-12">
+				<br/>
+				<center>
+				<h4>Please Fill out the following...</h4>
+				</center>
+			</div>
+
+
+
+		
+			<div class="col-sm-10 offset-sm-1">
+			<form class="form" id="frmPlayerInfo">
+
+				<div class="form-group">
+				    <label for="txtName"><strong>Name</strong></label>
+				    <input type="text" class="form-control no-profan" id="txtName" name="txtName" maxlength="30" aria-describedby="name" required minlength="2" placeholder="Enter Your Name">
+				 </div>
+
+				<div class="form-group">
+				    <label for="slctTeam"><strong>Team</strong></label>
+
+				    <div id="sbPnlTeamFrm">
+				    	<select id="slctTeam" class="form-control" onchange="applyTeamSelection()"></select><br/>
+				    </div>
+
+				    <div id="sbPnlTeamLbl">
+				    	<span id="lblTeam"></span>
+				    	<a href="javascript: openChangeTeam();" style="float:right" class="btn btn-primary">Change Team</a>
+				    </div>
+				    
+				    
+				 </div>
+
+				 
+				<div id="pnlSocial"></div>
+				
+			</form>
+			<a href="javascript: player.register();" class="btn btn-primary" style="float:right;">Next <i class="fas fa-arrow-right"></i></a>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="pnlGame">
+
+		<div class="row">
+			<div class="col-sm-12">
+				<br/>
+				<center>
+				<h4 id="lblTitle">Please wait until game starts<br/><br/>
+				<a href="javascript: changeTeam();" class="btn btn-primary">Go Back</a>
+
+				<h5 id="lblTimer"></h5>
+				<div id="lstPlayers"></div>
+				</center>
+			</div>
+
+			<div class="col-sm-10 offset-sm-1">
+
+				<div id="pnlChoices">
+
+					<a href="javascript: player.selectAnswer(1)" class="question-link" id="question-link-1">
+					<div class="progress" id="progress1">
+					  <div id="choice1" class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span class="choice-label" id="choice1-label">Choice goes here...</span></div>
+					</div>
+					</a>
+
+					
+
+					<a href="javascript: player.selectAnswer(2)" class="question-link" id="question-link-2">
+						<div class="progress" id="progress2">
+					  <div id="choice2" class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span class="choice-label" id="choice2-label">Choice goes here...</span></div>
+					</div>
+					</a>
+
+					
+
+					<a href="javascript: player.selectAnswer(3)" class="question-link" id="question-link-3">
+					  <div class="progress" id="progress3">
+					  <div id="choice3" class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span class="choice-label" id="choice3-label">Choice goes here...</span></div>
+					</div>
+					
+					</a>
+
+					
+
+					<a href="javascript: player.selectAnswer(4)" class="question-link" id="question-link-4">
+
+					  <div class="progress" id="progress4">
+					  <div id="choice4" class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span class="choice-label" id="choice4-label">Choice goes here...</span></div>
+					</div>
+
+					</a>
+					
+					<div id="question-survey">
+
+						<form class="form" id="frmSurvey">
+							<div class="form-group">
+							    <input type="text" class="form-control" name="question-response" id="question-response" placeholder="Please enter your response here">
+							 </div>
+							
+							<a id="btnSubmitSurvey" href="javascript: player.selectAnswer('surveyText')" class="btn btn-primary">Submit</a>
+						</form>
+
+
+	
+					</div>
+
+
+					<div style="clear: both;">&nbsp;</div>
+					<span id="lblAnswer"></span>
+				</div>
+
+				<div id="pnlScores">
+				<hr/>
+				<h4>Top Teams</h4>
+				<table id="tblTeamScores" class="table white">
+					<thead>
+						<tr>
+							<th></th>
+							<th>Team</th>
+							<th>Score</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+
+				<hr/>
+				<h3>Top Players</h3>
+				<table id="tblPlayerScore" class="table white">
+					<thead>
+						<tr>
+							<th></th>
+							<th>Player</th>
+							<th>Score</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div class="" style="position: absolute; bottom: 0px;">
+		<div class="col-sm-12">
+		<h6 id="bdgeConnect" style="text-align: right;"><span class="badge badge-success" style="height: 15px; width: 15px; border-radius: 15px;">&nbsp;</span></h6>
+		<h6 id="bdgeDisconnect" style="text-align: right;"><span class="badge badge-danger" style="height: 15px; width: 15px; border-radius: 15px;">&nbsp;</span></h6>
+		</div>
+	</div>
+</div><!-- end card -->
+
+
+
+
+</div>
+</center>
+
+
+</div>
+
+
+
+
+<style type="text/css">
+	
+	
+
+
+</style>
+
+
+
+
+
+</body>
+</html>

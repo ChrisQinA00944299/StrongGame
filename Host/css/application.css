@@ -1,0 +1,102 @@
+.question-body
+	{
+		color: #FFFFFF;
+   		margin: 20px;
+   		margin-top: 5px;
+
+   		background: url("../images/repeat1.jpg");
+
+	}
+
+	.score-body
+	{
+		color: #FFFFFF;
+		background: url("../images/repeat1.jpg");
+
+   		
+		/*
+   		background-position:center;
+   		background-size: 140% auto;
+   		*/
+	}
+
+	#pnlControls
+	{
+		background-color: #000000;
+		opacity: .7;
+		position:absolute;
+		bottom: 0px;
+		left: 0px;
+		width: 100%;
+		height: 50px;
+	}
+
+	#pnlGameID
+	{
+		float: left;
+		margin-left: 20px;
+		font-weight: bold;
+		font-size: 1.5em;
+	}
+
+	#pnlStatus
+	{
+		float: left;
+		margin-left: 5px;
+		margin-top: 5px;
+	}
+
+	#pnlControlButtons
+	{
+		float: right;
+		width: 50%;
+		text-align: right;
+		margin-right: 5px;
+
+	}
+
+	.btn-control
+	{
+		font-size: 24px;
+		color: #FFFFFF;
+	}
+
+	.btn-control:hover
+	{
+		font-size: 24px;
+		color: #FF0000;
+	}
+
+	#qrcode
+	{
+		margin-top: 10px;
+		padding: 10px;
+		background-color: #FFFFFF;
+		width: 520px;
+	}
+
+	#lstInstructions
+	{
+		margin-top: 10px;
+		background-color: #000000;
+		opacity: .8;
+		border-radius: 5px;
+
+	}
+	#lstInstructions li
+	{
+		font-size: 1.5em !important;
+	}
+
+	.team-icon
+	{
+		width: 50px;
+		height: 50px;
+		border-radius: 50px;
+		background-color: #4834d4;
+		margin-right: 5px;
+		font-size: 30px !important;
+		padding-left: 17px;
+		float: left;
+		display: block;
+	}

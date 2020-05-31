@@ -1,0 +1,930 @@
+<script src="./lib/socket.io.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+<div class="container">
+	<h2>Game Stats and Survey Responses</h2>
+
+	<h4><a href="javascript: history.back(1);"><i class="material-icons">keyboard_backspace</i> Go Back</a></h4>  
+
+	<div class="row">
+
+		<div class="col-md-12">
+
+
+			<div class="card" id="crdSelect">
+				<div class="card-header card-header-text ">
+					<div class="card-text">
+						<h4 class="card-title" id="lblGameFrm">Select a Session</h4>
+					</div>
+				</div>
+
+				<div class="card-body">
+
+					<div class="form-group">
+					<label for="slctQuestionType">Session</label>
+					<select class="form-control question-input" data-style="btn btn-dark" id="slctSessions" onchange="slctSessionLoadHandler()">
+					</select>
+					<br/><br/>
+
+				</div>
+
+					
+				</div>
+			</div>
+
+			<div id="pnlResponses">
+
+				
+
+
+
+			<div id="pnlStats">
+
+
+				<div class="card">
+					<div class="card-header card-header-text ">
+						<div class="card-text">
+							<h4 class="card-title" id="lblGameFrm">Question Answer Stats</h4>
+						</div>
+					</div>
+
+					<div class="card-body">
+
+						<button class="btn btn-success" onclick="downloadResponses();" id="btnStart"><i class="material-icons">cloud_download</i> Download Player Answers</button>
+						<button class="btn btn-success" onclick="downloadResponseStats();" id="btnStart"><i class="material-icons">cloud_download</i> Download Response Stats</button> 
+						<br/><br/>
+
+						<table id="tblStats" class="table white">
+							<thead>
+								<tr>
+									<th>Item</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="text-left"># Questions</td>
+									<td class="text-left"><strong><span id="lblTotalQuestions">null</span></strong></td>
+								</tr>
+								<tr>
+									<td class="text-left"># Players</td>
+									<td class="text-left"><strong><span id="lblTotalPlayers">null</span></strong></td>
+								</tr>
+								<tr>
+									<td class="text-left">Hardest Question</td>
+									<td class="text-left"><span id="lblHardestQuestion">null</span></td>
+								</tr>
+								<tr>
+									<td class="text-left">Easiest Question</td>
+									<td class="text-left"><span id="lblEasiestQuestion">null</span></td>
+								</tr>
+							</tbody>
+						</table>
+
+
+						<div class="tabs">
+						  <input type="radio" name="tabs" id="tabone" checked="checked">
+						  <label for="tabone">Avg Responses</label>
+						  <div class="tab">
+						    <div id="chtQuestions"></div>
+						  </div>
+						  
+						  <input type="radio" name="tabs" id="tabtwo">
+						  <label for="tabtwo">Avg First Resp</label>
+						  <div class="tab">
+						    <div id="chtSeconds"></div>
+						  </div>
+						  
+						  <input type="radio" name="tabs" id="tabthree">
+						  <label for="tabthree">Avg Correct Initial</label>
+						  <div class="tab">
+						    <div id="chtFirst"></div>
+						  </div>
+
+						  <input type="radio" name="tabs" id="tabfour">
+						  <label for="tabfour">Avg Correct Final</label>
+						  <div class="tab">
+						    <div id="chtLast"></div>
+						  </div>
+
+
+						</div>
+
+
+
+						
+
+						
+
+						
+
+						
+
+
+
+						
+					</div>
+				</div>
+
+
+
+			</div>
+			
+
+
+
+				<div class="card">
+					<div class="card-header card-header-text ">
+						<div class="card-text">
+							<h4 class="card-title" id="lblGameFrm">Survey Responses</h4>
+						</div>
+					</div>
+
+					<div class="card-body">
+						<button class="btn btn-success" onclick="downloadSurveyResponses();" id="btnStart"><i class="material-icons">cloud_download</i> Download Survey Responses</button>
+						
+						<h3>Responses</h3>
+						<table id="tblResponses" class="table white">
+							<thead>
+								<tr>
+									<th>Question</th> 
+									<th>Response</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+
+
+						</table>
+  
+						
+					</div>
+				</div>
+
+
+
+				<div class="card">
+					<div class="card-header card-header-text ">
+						<div class="card-text">
+							<h4 class="card-title" id="lblGameFrm">Scores</h4>
+						</div>
+					</div>
+
+					<div class="card-body">
+
+						<button class="btn btn-success" onclick="downloadScores();" id="btnStart"><i class="material-icons">cloud_download</i> Download Scores</button>
+						<h3>Top Teams</h3>
+						<table id="tblTeamScores" class="table white">
+							<thead>
+								<tr>
+									<th></th> 
+									<th>Team</th>
+									<th>Score</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+
+						<h3>Top Players</h3>
+						<table id="tblPlayerScore" class="table white">
+							<thead>
+								<tr>
+									<th></th>
+									<th>Player</th>
+									<th>Score</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div>
+
+
+
+			</div>
+
+
+
+
+
+			</div>
+
+
+
+			
+
+
+		</div>
+		
+
+
+	</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+
+	var sessionID = "";
+
+	$( document ).ready(function() {
+		loadSessions();
+		$('#pnlResponses').hide();
+		$('#pnlStats').hide();
+
+
+	
+
+	}); 
+
+
+	function loadSessions()
+	{
+
+
+		
+		sessionID = getUrlParam('sessionID','empty');
+
+		//If session ID was passed in, go ahead and load that bad boy....
+		if(sessionID != 'empty')
+		{
+			loadSessionInfo(sessionID);
+			$('#crdSelect').hide();
+		}
+		else
+		{
+
+			//perform AJAX call to the API to get our data...
+			var url = config.api_url + "/games/sessions/" + getUrlParam('id',0);  
+			var params = {};
+
+			//perform the call
+			fetch(url,{  
+			method: 'GET',
+			}).then(function (response) 
+			{  
+			return response.json();
+			})  
+			.then(function(data) 
+			{
+		
+			
+
+			var html = '<option value="0">Select a Session</option>';
+			for(var i = 0; i < data.length; i++)
+			{
+				var stillUtc = moment.utc(data[i].date).toDate();
+				html += '<option value="' + data[i].sessionID + '">' + moment(stillUtc).local().format('lll') + ' </option>'
+			}
+
+			$('#slctSessions').html(html);
+			$(".selectpicker").selectpicker();
+
+
+			});
+
+
+		}
+
+
+
+	
+
+
+	}
+		
+
+	function downloadResponses()
+	{
+			//perform AJAX call to the API to get our data...
+			//var sessionID = $('#slctSessions').val();
+			var url = config.api_url + "/sessions/" + sessionID + "/responses";  
+			var params = {};
+
+			window.location = url;
+	}
+
+
+	function downloadResponseStats()
+	{
+
+			//perform AJAX call to the API to get our data...
+			//var sessionID = $('#slctSessions').val();
+			var url = config.api_url + "/sessions/" + sessionID + "/exportResponseStats";  
+			var params = {};
+
+			window.location = url;
+
+	}
+		
+
+
+	function downloadScores()
+	{
+			//perform AJAX call to the API to get our data...
+			//var sessionID = $('#slctSessions').val();
+			var url = config.api_url + "/sessions/" + sessionID + "/exportScores";  
+			var params = {};
+
+			window.location = url;
+	}
+
+
+
+	function slctSessionLoadHandler()
+	{
+		sessionID = $('#slctSessions').val();
+		loadSessionInfo(sessionID);
+	}
+
+	function loadSessionInfo(sessionID)
+	{
+
+
+
+		//perform AJAX call to the API to get our data...
+		var url = config.api_url + "/sessions/" + sessionID;  
+		var params = {};
+
+
+		//perform the call
+		fetch(url,{  
+		method: 'GET',
+		}).then(function (response) 
+		{  
+		return response.json();
+		})  
+		.then(function(data) 
+		{
+		
+		
+		var html = '';
+		var html2 = '';
+		var surveyResponses = JSON.parse(data.surveyResponses);
+		var activity = JSON.parse(data.activity);
+
+		//console.log(data);
+		for(var i = 0; i < surveyResponses.length; i++) 
+		{
+			html += '<tr>';
+			html += '<td class="text-left">' + surveyResponses[i].question + '</td>';
+			html += '<td class="text-left">' + surveyResponses[i].response + '</td>';
+			html += '</tr>';
+			
+		}
+		
+		$('#pnlResponses').fadeIn();
+		$('#pnlStats').fadeIn();
+
+		$('#tblResponses > tbody').html(html);
+
+		var scores = JSON.parse(data.scores);
+		var html = "";
+		var counter = 1;
+		for(var i = 0; i < scores.teams.length; i++)
+		{
+			try
+			{
+				html += '<tr>';
+				html += '<td>' + counter + '</td><td>' + scores.teams[i].name + '</td><td>' + scores.teams[i].score + '</td>';
+				html += '</tr>';
+
+				counter++;
+			}
+			catch(err){}
+		}
+		$('#tblTeamScores > tbody').html(html);
+
+		var html = "";
+		var counter = 1;
+		for(var i = 0; i < scores.players.length; i++)
+		{
+			try
+			{
+				html += '<tr>';
+				html += '<td>' + counter + '</td><td>' + scores.players[i].name + '</td><td>' + scores.players[i].score + '</td>';
+				html += '</tr>';
+
+				counter++;
+			}
+			catch(err){}
+		}
+		$('#tblPlayerScore > tbody').html(html);
+
+
+
+
+	
+		});
+
+
+		url = config.api_url + "/sessions/" + sessionID + "/responseSummary";
+		//perform the call
+		fetch(url,{  
+		method: 'GET',
+		}).then(function (response) 
+		{  
+		return response.json();
+		})  
+		.then(function(data) 
+		{
+		
+			console.log("my data");
+			console.log(data);
+
+			var hardest = {questionID:data[0].questionID,question:data[0].question,responses:data[0].numberofResponses};
+			var easiest = {questionID:data[0].questionID,question:data[0].question,responses:data[0].numberofResponses};
+			var totalQuestions = data[0].totalQuestions;
+			var totalPlayers = data[0].totalPlayers;
+			var averageResponses = [];
+			var averageCorrectInitial = [];
+			var avrageCorrectFinal = [];
+			var averageSecsFirstResponse = [];
+			var questionIDArray = ["0"];
+
+			for(var i = 0; i < data.length; i++)
+			{
+
+				if(data[i].numberofResponses > hardest.responses)
+				{
+					hardest = {questionID:data[i].questionID,question:data[i].question,responses:data[i].numberofResponses};
+				}
+
+				if(data[i].numberofResponses < easiest.responses)
+				{
+					easiest = {questionID:data[i].questionID,question:data[i].question,responses:data[i].numberofResponses};
+				}
+
+				averageResponses.push(data[i].averagePlayerResponses);
+				averageCorrectInitial.push(data[i].averageCorrectInitial);
+				avrageCorrectFinal.push(data[i].averageCorrectFinal);
+				averageSecsFirstResponse.push(data[i].averageSecsFirstResponse);
+
+
+
+				questionIDArray.push(data[i].questionID);
+
+
+			}
+
+			console.log(questionIDArray);
+
+			$('#lblEasiestQuestion').html('Question ' + easiest.questionID + ' - ' + easiest.question + ' - ' +  easiest.responses + ' responses total');
+			$('#lblHardestQuestion').html('Question ' + hardest.questionID + ' - ' + hardest.question + ' - ' + hardest.responses + ' responses total');
+			$('#lblTotalQuestions').html(totalQuestions);
+			$('#lblTotalPlayers').html(totalPlayers);
+
+
+
+
+			//average responses per question
+			Highcharts.chart('chtQuestions', {
+		    title: {
+		        text: 'Average Response time per question'
+		    },
+
+		    yAxis: {
+		        title: {
+		            text: 'Seconds'
+		        },
+		        
+		    },
+
+		    xAxis: {
+		    	title: {
+		            text: 'Question ID'
+		        },
+		        categories:questionIDArray,
+		    	
+		    },
+
+
+		    legend: {
+		        layout: 'vertical',
+		        align: 'right',
+		        verticalAlign: 'middle'
+		    },
+
+		    plotOptions: {
+		        series: {
+		            label: {
+		                connectorAllowed: false
+		            },
+		            pointStart: 1
+		        }
+		    },
+
+		    series: [{
+		        name: 'Avg Response Delay',
+		        data: averageResponses,
+		        color:'#89229b',
+		        		        
+		    }],
+
+		    tooltip: {
+		        formatter: function () {
+		        	console.log(this.x);
+		            return 'The value for question: ' + data[this.series.data.indexOf( this.point )].questionID + ' - <b>' + data[this.series.data.indexOf( this.point )].question +
+		                '</b> is <b>' + this.y + ' second(s)</b>';
+		        }
+		    },
+
+
+		    responsive: {
+		        rules: [{
+		            condition: {
+		                maxWidth: 500
+		            },
+		            chartOptions: {
+		                legend: {
+		                    layout: 'horizontal',
+		                    align: 'center',
+		                    verticalAlign: 'bottom'
+		                }
+		            }
+		        }]
+		    }
+
+		});
+
+
+
+		//average seconds first response
+		Highcharts.chart('chtSeconds', {
+		    title: {
+		        text: 'Average Seconds Before First Response'
+		    },
+
+		    yAxis: {
+		        title: {
+		            text: 'Seconds'
+		        },
+		        
+		    },
+
+		    xAxis: {
+		    	title: {
+		            text: 'Question ID'
+		        },
+		        categories:questionIDArray,
+		    	
+		    },
+
+
+		    legend: {
+		        layout: 'vertical',
+		        align: 'right',
+		        verticalAlign: 'middle'
+		    },
+
+		    plotOptions: {
+		        series: {
+		            label: {
+		                connectorAllowed: false
+		            },
+		            pointStart: 1
+		        }
+		    },
+
+		    series: [{
+		        name: 'Avg Response Delay',
+		        data: averageSecsFirstResponse,
+		        color:'#89229b',
+		        		        
+		    }],
+
+		    tooltip: {
+		        formatter: function () {
+		        	console.log(this.x);
+		            return 'The value for question: ' + data[this.series.data.indexOf( this.point )].questionID + ' - <b>' + data[this.series.data.indexOf( this.point )].question +
+		                '</b> is <b>' + this.y + ' second(s)</b>';
+		        }
+		    },
+
+
+		    responsive: {
+		        rules: [{
+		            condition: {
+		                maxWidth: 500
+		            },
+		            chartOptions: {
+		                legend: {
+		                    layout: 'horizontal',
+		                    align: 'center',
+		                    verticalAlign: 'bottom'
+		                }
+		            }
+		        }]
+		    }
+
+		});
+
+
+
+
+
+
+		//average correct initial
+		Highcharts.chart('chtFirst', {
+		    title: {
+		        text: 'Average Correct Initial Responses'
+		    },
+
+		    yAxis: {
+		        title: {
+		            text: 'Seconds'
+		        },
+		        
+		    },
+
+		    xAxis: {
+		    	title: {
+		            text: 'Question ID'
+		        },
+		        categories:questionIDArray,
+		    	
+		    },
+
+
+		    legend: {
+		        layout: 'vertical',
+		        align: 'right',
+		        verticalAlign: 'middle'
+		    },
+
+		    plotOptions: {
+		        series: {
+		            label: {
+		                connectorAllowed: false
+		            },
+		            pointStart: 1
+		        }
+		    },
+
+		    series: [{
+		        name: 'Avg Response Delay',
+		        data: averageCorrectInitial,
+		        color:'#89229b',
+		        		        
+		    }],
+
+		    tooltip: {
+		        formatter: function () {
+		        	console.log(this.x);
+		            return 'The value for question: ' + data[this.series.data.indexOf( this.point )].questionID + ' - <b>' + data[this.series.data.indexOf( this.point )].question +
+		                '</b> is <b>' + this.y + ' Avg Correct Responses</b>';
+		        }
+		    },
+
+
+		    responsive: {
+		        rules: [{
+		            condition: {
+		                maxWidth: 500
+		            },
+		            chartOptions: {
+		                legend: {
+		                    layout: 'horizontal',
+		                    align: 'center',
+		                    verticalAlign: 'bottom'
+		                }
+		            }
+		        }]
+		    }
+
+		});
+
+
+
+
+
+
+
+		//average correct final
+		Highcharts.chart('chtLast', {
+		    title: {
+		        text: 'Average Correct Final Responses'
+		    },
+
+		    yAxis: {
+		        title: {
+		            text: 'Seconds'
+		        },
+		        
+		    },
+
+		    xAxis: {
+		    	title: {
+		            text: 'Question ID'
+		        },
+		        categories:questionIDArray,
+		    	
+		    },
+
+
+		    legend: {
+		        layout: 'vertical',
+		        align: 'right',
+		        verticalAlign: 'middle'
+		    },
+
+		    plotOptions: {
+		        series: {
+		            label: {
+		                connectorAllowed: false
+		            },
+		            pointStart: 1
+		        }
+		    },
+
+		    series: [{
+		        name: 'Avg Response Delay',
+		        data: averageSecsFirstResponse,
+		        color:'#89229b',
+		        		        
+		    }],
+
+		    tooltip: {
+		        formatter: function () {
+		        	console.log(this.x);
+		            return 'The value for question: ' + data[this.series.data.indexOf( this.point )].questionID + ' - <b>' + data[this.series.data.indexOf( this.point )].question +
+		                '</b> is <b>' + this.y + ' Avg Correct Responses</b>';
+		        }
+		    },
+
+
+		    responsive: {
+		        rules: [{
+		            condition: {
+		                maxWidth: 500
+		            },
+		            chartOptions: {
+		                legend: {
+		                    layout: 'horizontal',
+		                    align: 'center',
+		                    verticalAlign: 'bottom'
+		                }
+		            }
+		        }]
+		    }
+
+		});
+
+
+
+		
+		});
+
+
+
+
+
+
+
+		
+
+
+
+
+	}
+
+
+	function getUrlParam(parameter, defaultvalue)
+	{
+	    var urlparameter = defaultvalue;
+	    if(window.location.href.indexOf(parameter) > -1){
+	        urlparameter = getUrlVars()[parameter];
+	        }
+	    return urlparameter;
+	}
+
+	function getUrlVars() 
+	{
+	    var vars = {};
+	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+	        vars[key] = value;
+	    });
+	    return vars;
+	}
+
+
+/**
+ * Responsive pure CSS tabs & accordion
+ * Without position absolute & with a selected state
+ */
+
+/**
+
+A lot of CSS tabs need either the tab content or labels to be position absoluted, or sacrifice the selected state on the tabs.
+
+This uses flexbox and order to have both.
+
+It also allows you to drop down to an accordion when on mobile.
+*/
+
+
+
+</script>
+
+<script src="./src/vendor/material-ui/js/material-dashboard.js?v=2.1.0" type="text/javascript"></script>
+
+
+<style type="text/css">
+	
+
+
+	table {  
+    color: #333;
+    font-family: Helvetica, Arial, sans-serif;
+    width: 640px; 
+    border-collapse: 
+    collapse; border-spacing: 0; 
+}
+
+td, th {  
+    border: 1px solid transparent; /* No more visible border */
+    height: 30px; 
+    transition: all 0.3s;  /* Simple transition for hover effect */
+}
+
+th {  
+    background: #DFDFDF;  /* Darken header a bit */
+    font-weight: bold;
+}
+
+td {  
+    background: #FAFAFA;
+    text-align: center;
+}
+
+/* Cells in even rows (2,4,6...) are one color */        
+tr:nth-child(even) td { background: #F1F1F1; }   
+
+/* Cells in odd rows (1,3,5...) are another (excludes header cells)  */        
+tr:nth-child(odd) td { background: #FEFEFE; }  
+
+tr td:hover { background: #666; color: #FFF; }  
+/* Hover cell effect! */
+
+
+/**
+ * Tabs
+ */
+.tabs {
+	display: flex;
+	flex-wrap: wrap; // make sure it wraps
+}
+.tabs label {
+	order: 1; // Put the labels first
+	display: block;
+	padding: 1rem 2rem;
+	margin-right: 0.2rem;
+	cursor: pointer;
+  background: #EFEFEF;
+  font-weight: bold;
+  transition: background ease 0.2s;
+}
+.tabs .tab {
+  order: 99; // Put the tabs last
+  flex-grow: 1;
+	width: 100%;
+	display: none;
+  padding: 1rem;
+  background: #fff;
+}
+.tabs input[type="radio"] {
+	display: none;
+}
+.tabs input[type="radio"]:checked + label {
+	background: #fff;
+}
+.tabs input[type="radio"]:checked + label + .tab {
+	display: block;
+}
+
+@media (max-width: 45em) {
+  .tabs .tab,
+  .tabs label {
+    order: initial;
+  }
+  .tabs label {
+    width: 100%;
+    margin-right: 0;
+    margin-top: 0.2rem;
+  }
+}
+
+
+
+
+</style>
